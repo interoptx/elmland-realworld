@@ -6,8 +6,8 @@ import Api.PopularTagsList
 import Auth
 import Date
 import Effect exposing (Effect, replaceUrl)
-import Html exposing (..)
-import Html.Attributes as Attr
+import Html
+-- import Html.Attributes as Attr
 import Html.Events exposing (onClick)
 import Http
 import Iso8601 exposing (toTime)
@@ -20,11 +20,143 @@ import Shared.Msg
 import Time exposing (Month(..), utc)
 import View exposing (View)
 -- import Html.Styled.Events exposing (..)
--- import Html.Styled exposing (..)
--- import Html.Styled.Attributes as Attr exposing (..)
+import Html.Styled as Html exposing (..)
+import Html.Styled.Attributes as Attr exposing (..)
 import Css exposing (..)
 -- import Browser.Navigation exposing (replaceUrl)
 
+
+{-| A logo image, with inline styles that change on hover.
+-}
+logo : Html msg
+logo = img
+           [  Attr.class "user-pic"
+           , Attr.src "images/interoptx-icon.png"
+           ]
+           []
+        
+
+{-| A plain old record holding theme colors.
+-}
+theme : { secondary : Color, primary : Color }
+theme =
+    { primary = hex "55af6a"
+    , secondary = rgb 250 240 230
+    }
+
+
+-- Define styles for floating divs
+floatingDivStyle floatDirection =
+    [ float floatDirection
+    -- , Css.width (px 200)
+    -- , Css.height (px 200)
+    , margin (px 5)
+    -- , backgroundColor (hex "ddd")
+    ]
+
+-- Define a floating div as a styled component
+floatingDiv : List (Html msg) -> (ExplicitLength IncompatibleUnits -> Style) -> Html msg
+floatingDiv content direction =
+    div
+        [  (floatingDivStyle direction) ]
+        content
+
+-- Define the clearfix style
+clearfixStyle : List Css.Style
+clearfixStyle =
+    [ Css.property "clear" "both" ]
+
+-- Define a clearfix as a styled component
+clearfixDiv : Html msg
+clearfixDiv =
+    div
+        [  clearfixStyle ]
+        []
+
+bannerButtonCSS : Attribute msg
+bannerButtonCSS = css [
+       fontFamily sansSerif
+    --   , paddingBottom (px 60)
+    --   , paddingTop (px 30)
+      , paddingRight (px 80)
+      , fontSize (px 32)
+      , fontWeight normal
+      , backgroundColor <| rgb 250 250 255
+      , borderColor <| rgb 250 250 255
+      , borderStyle Css.none
+      , hover
+        [ borderColor theme.primary
+        , borderRadius (px 10)
+        , borderStyle Css.solid
+        , borderWidth (px 1)
+        ]
+      ]
+
+aboutButton : Html msg
+aboutButton = button 
+                [ bannerButtonCSS ]
+                [ text "About" ]
+
+trainingButton : Html msg
+trainingButton = button 
+                [bannerButtonCSS ]
+                [ text "Training" ]
+
+teamButton : Html msg
+teamButton = button 
+                [bannerButtonCSS ]
+                [ text "Team" ]
+
+technologiesButton : Html msg
+technologiesButton = button 
+                [bannerButtonCSS ]
+                [ text "Technologies" ]
+
+knowledgeGraphsButton : Html msg
+knowledgeGraphsButton = button 
+                [bannerButtonCSS ]
+                [ text "Knowledge Graphs" ]
+
+whyUsButton : Html msg
+whyUsButton = button 
+                [bannerButtonCSS ]
+                [ text "Why Us" ]
+
+contactUsButton : Html msg
+contactUsButton = button 
+                [bannerButtonCSS]
+                [ text "Contact Us" ]
+
+
+websiteNameCSS : Attribute msg
+websiteNameCSS = [paddingBottom (px 60), fontSize (px 48)]
+
+bannerLinkCSS : Attribute msg
+bannerLinkCSS =  [
+       fontFamily sansSerif
+    --   , paddingBottom (px 60)
+    --   , paddingTop (px 30)
+    --   , paddingRight (px 40)
+      , fontSize (px 32)
+      , fontWeight normal
+      , backgroundColor <| rgb 250 250 255
+      , borderColor <| rgb 250 250 255
+      , borderStyle Css.none
+      ]
+
+mainBanner : Html msg
+mainBanner =  div [] 
+            [ floatingDiv ([h3 [] [logo]]) left 
+            , floatingDiv ([h3 [websiteNameCSS] [text "InteroptX"]]) left
+            , floatingDiv ([h3 [bannerLinkCSS] [contactUsButton]]) right
+            , floatingDiv ([h3 [bannerLinkCSS] [whyUsButton]]) right
+            , floatingDiv ([h3 [bannerLinkCSS] [technologiesButton]]) right
+            , floatingDiv ([h3 [bannerLinkCSS] [knowledgeGraphsButton]]) right
+            , floatingDiv ([h3 [bannerLinkCSS] [teamButton]]) right
+            , floatingDiv ([h3 [bannerLinkCSS] [trainingButton]]) right
+            , floatingDiv ([h3 [bannerLinkCSS] [aboutButton]]) right
+            , clearfixDiv
+             ]
 
 layout : Auth.User -> Model -> Layouts.Layout
 layout user model =
